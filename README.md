@@ -3,5 +3,7 @@ This is the code repository for a simple Messenger echo bot. Please check the fu
 
 # TODO
 Add Wit.ai
+
 Make it conversational
+
 Add Speech
