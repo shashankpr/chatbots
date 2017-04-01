@@ -78,7 +78,7 @@ def fetch_weather(sender_id, context):
             del context['forecast']
     return context
 
-def set_action(sender_id, context, entities, response):
+def set_action(sender_id, response):
     # Setup Actions
     actions = {
         'say'  : say,
