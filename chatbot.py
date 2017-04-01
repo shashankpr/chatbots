@@ -51,9 +51,9 @@ def first_entity_value(entities, entity):
         return None
     return val['value'] if isinstance(val, dict) else val
 
-def say(session_id, context, msg):
+def say(sender_id, context, response):
     global messageToSend
-    messageToSend = str(msg)
+    messageToSend = str(response)
     global done
     done = True
 
@@ -78,7 +78,7 @@ def fetch_weather(sender_id, context):
             del context['forecast']
     return context
 
-def set_action():
+def set_action(sender_id, context, entities, response):
     # Setup Actions
     actions = {
         'say'  : say,
