@@ -30,7 +30,7 @@ def webhook():
         print "Incoming from %s: %s" % (sender, message)
 
         client = chatbot.getWit()
-        client.run_actions(sender, message)
+        client.interactive()
         #response = bot.respond_to(message)
 
         print "Outgoing to %s: %s" % (sender, message)

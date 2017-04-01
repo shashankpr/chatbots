@@ -21,6 +21,7 @@ import os
 import requests
 from sys import argv
 from wit import Wit
+import messenger
 #from bottle import Bottle, request, debug
 from flask import Flask, request
 
@@ -29,7 +30,8 @@ from flask import Flask, request
 
 WIT_TOKEN = 'GLEQMX7YW4IR4TM5S5B2TUBPWJTCFDQQ'
 # Messenger API parameters
-FB_PAGE_TOKEN = os.environ.get('FB_PAGE_TOKEN')
+#FB_PAGE_TOKEN = os.environ.get('FB_PAGE_TOKEN')
+FB_PAGE_TOKEN = 'EAACyYurnCYEBANLpIzLGAYA38fGeIXwS0v0q4LiZC7eH45LLnGMNe43ePXRYYDqWthXuW1qRJ5IZBxV3Ipek5ZCe3iMs0hZCZAN4BAOLZB41pHUTT0sZBVxEZAZCsiYckz1PDgAJVqzQMMhVAZCHzcKY49rtjwIO5lKeM8nUZBGTxGWCwZDZD'
 # A user secret to verify webhook get request.
 FB_VERIFY_TOKEN = os.environ.get('FB_VERIFY_TOKEN')
 
@@ -57,6 +59,16 @@ def say(sender_id, context, response):
     global done
     done = True
 
+def send(request, response):
+    """
+    Sender function
+    """
+    # We use the fb_id as equal to session_id
+    fb_id = request['session_id']
+    text = response['text']
+    # send message
+    messenger.send_message(FB_PAGE_TOKEN, fb_id, text)
+
 def merge(context, entities):
     loc = first_entity_value(entities, 'location')
     if loc:
@@ -82,6 +94,7 @@ def fetch_weather(context):
     # Setup Actions
 actions = {
     'say'  : say,
+    'send' : send,
     'merge': merge,
     'fetch-weather': fetch_weather,
     }
