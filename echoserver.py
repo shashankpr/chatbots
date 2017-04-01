@@ -30,11 +30,11 @@ def webhook():
         print "Incoming from %s: %s" % (sender, message)
 
         client = chatbot.getWit()
-        client.interactive()
+        client.run_actions(sender, message)
         #response = bot.respond_to(message)
 
         print "Outgoing to %s: %s" % (sender, message)
-        messenger.send_message(FACEBOOK_TOKEN, sender, message)
+        #messenger.send_message(FACEBOOK_TOKEN, sender, message)
     return "ok"
 
 
