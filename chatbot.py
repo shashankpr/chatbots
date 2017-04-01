@@ -57,14 +57,14 @@ def say(sender_id, context, response):
     global done
     done = True
 
-def merge(sender_id, context, entities, response):
+def merge(context, entities):
     loc = first_entity_value(entities, 'location')
     if loc:
         context['loc'] = loc
     return context
 
 
-def fetch_weather(sender_id, context):
+def fetch_weather(context):
     loc = context['loc']
     #loc = first_entity_value(entities, 'location')
     if loc:
@@ -78,15 +78,16 @@ def fetch_weather(sender_id, context):
             del context['forecast']
     return context
 
-def set_action(sender_id, response):
+
     # Setup Actions
-    actions = {
-        'say'  : say,
-        'merge': merge,
-        'fetch-weather': fetch_weather,
+actions = {
+    'say'  : say,
+    'merge': merge,
+    'fetch-weather': fetch_weather,
     }
 
     # Setup Wit Client
+def getWit():
     client = Wit(access_token=WIT_TOKEN, actions=actions)
 
     return client

@@ -29,7 +29,7 @@ def webhook():
     for sender, message in messenger.messaging_events(payload):
         print "Incoming from %s: %s" % (sender, message)
 
-        client = chatbot.set_action(sender, message)
+        client = chatbot.getWit()
         client.run_actions(sender, message)
         #response = bot.respond_to(message)
 
@@ -40,5 +40,5 @@ def webhook():
 
 if __name__ == '__main__':
 
-    #gbot = chatbot
+    #chatbot
     app.run()
