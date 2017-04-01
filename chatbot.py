@@ -124,6 +124,15 @@ def send(request, response):
     # send message
     fb_message(fb_id, text)
 
+def merge(request):
+    context = request['context']
+    entities = request['entities']
+    loc = first_entity_value(entities, 'location')
+    if loc:
+        context['loc'] = loc
+    return context
+
+
 
 def get_forecast(request):
     context = request['context']
@@ -143,6 +152,7 @@ def get_forecast(request):
 # Setup Actions
 actions = {
     'send': send,
+    'merge': merge,
     'fetch-weather': get_forecast,
 }
 
