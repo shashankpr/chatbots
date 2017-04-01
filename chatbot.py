@@ -127,7 +127,7 @@ def send(request, response):
 def merge(request):
     context = request['context']
     entities = request['entities']
-    loc = first_entity_value(entities, 'location')
+    loc = first_entity_value(entities, 'loc')
     if loc:
         context['loc'] = loc
     return context
