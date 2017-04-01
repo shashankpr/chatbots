@@ -1,57 +1,44 @@
 from flask import Flask, request
-import json
-import requests
+from wit import Wit
+import warnings
+
+import messenger
+import chatbot
 
 app = Flask(__name__)
 
-PAT = 'EAACyYurnCYEBANLpIzLGAYA38fGeIXwS0v0q4LiZC7eH45LLnGMNe43ePXRYYDqWthXuW1qRJ5IZBxV3Ipek5ZCe3iMs0hZCZAN4BAOLZB41pHUTT0sZBVxEZAZCsiYckz1PDgAJVqzQMMhVAZCHzcKY49rtjwIO5lKeM8nUZBGTxGWCwZDZD'
+FACEBOOK_TOKEN = 'EAACyYurnCYEBANLpIzLGAYA38fGeIXwS0v0q4LiZC7eH45LLnGMNe43ePXRYYDqWthXuW1qRJ5IZBxV3Ipek5ZCe3iMs0hZCZAN4BAOLZB41pHUTT0sZBVxEZAZCsiYckz1PDgAJVqzQMMhVAZCHzcKY49rtjwIO5lKeM8nUZBGTxGWCwZDZD'
+
 
 @app.route('/', methods=['GET'])
 def handle_verification():
-  print "Handling Verification: ->"
-  if request.args.get('hub.verify_token', '') == 'mischief_managed':
-    print "Verification successful!"
-    return request.args.get('hub.challenge', '')
-  else:
-    print "Verification failed!"
-    return 'Error, wrong validation token'
+    print "Handling Verification: ->"
+    if request.args.get('hub.verify_token', '') == 'mischief_managed':
+        print "Verification successful!"
+        return request.args.get('hub.challenge', '')
+    else:
+        print "Verification failed!"
+        return 'Error, wrong validation token'
+
 
 @app.route('/', methods=['POST'])
-def handle_messages():
-  print "Handling Messages"
-  payload = request.get_data()
-  print payload
-  for sender, message in messaging_events(payload):
-    print "Incoming from %s: %s" % (sender, message)
-    send_message(PAT, sender, message)
-  return "ok"
+def webhook():
+    print "Handling Messages"
+    payload = request.get_data()
+    print payload
+    for sender, message in messenger.messaging_events(payload):
+        print "Incoming from %s: %s" % (sender, message)
 
-def messaging_events(payload):
-  """Generate tuples of (sender_id, message_text) from the
-  provided payload.
-  """
-  data = json.loads(payload)
-  messaging_events = data["entry"][0]["messaging"]
-  for event in messaging_events:
-    if "message" in event and "text" in event["message"]:
-      yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
-    else:
-      yield event["sender"]["id"], "I can't echo this"
+        client = chatbot.set_action()
+        response = client.run_actions(sender, message)
+        #response = bot.respond_to(message)
 
+        print "Outgoing to %s: %s" % (sender, response)
+        messenger.send_message(FACEBOOK_TOKEN, sender, message)
+    return "ok"
 
-def send_message(token, recipient, text):
-  """Send the message text to recipient with id recipient.
-  """
-
-  r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-    params={"access_token": token},
-    data=json.dumps({
-      "recipient": {"id": recipient},
-      "message": {"text": text.decode('unicode_escape')}
-    }),
-    headers={'Content-type': 'application/json'})
-  if r.status_code != requests.codes.ok:
-    print r.text
 
 if __name__ == '__main__':
-  app.run()
+
+    #gbot = chatbot
+    app.run()
