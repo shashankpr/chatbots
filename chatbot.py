@@ -129,15 +129,16 @@ def merge(request):
     entities = request['entities']
     loc = first_entity_value(entities, 'location')
     if loc:
-        context['loc'] = loc
+        context['location'] = loc
     return context
 
 
 
-def get_forecast(request):
+def getWeather(request):
     context = request['context']
     entities = request['entities']
-    loc = first_entity_value(entities, 'loc')
+    #loc = first_entity_value(entities, 'loc')
+    loc = context['location']
     if loc:
         # This is where we could use a weather service api to get the weather.
         context['forecast'] = 'sunny'
@@ -153,7 +154,7 @@ def get_forecast(request):
 actions = {
     'send': send,
     'merge': merge,
-    'fetch-weather': get_forecast,
+    'getWeather': getWeather,
 }
 
 # Setup Wit Client
