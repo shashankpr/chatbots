@@ -144,6 +144,7 @@ def getWeather(request):
         context['forecast'] = 'sunny'
         if context.get('missingLocation') is not None:
             del context['missingLocation']
+        del context['location']
     else:
         context['missingLocation'] = True
         if context.get('forecast') is not None:
