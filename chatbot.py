@@ -37,7 +37,8 @@ FB_VERIFY_TOKEN = os.environ.get('FB_VERIFY_TOKEN')
 #debug(True)
 #app = Flask(__name__)
 
-
+messageToSend = "Hi There !! I am Jarvis and I'm awesome"
+done = False
 
 def first_entity_value(entities, entity):
     """
@@ -49,6 +50,12 @@ def first_entity_value(entities, entity):
     if not val:
         return None
     return val['value'] if isinstance(val, dict) else val
+
+def say(session_id, context, msg):
+    global messageToSend
+    messageToSend = str(msg)
+    global done
+    done = True
 
 def merge(sender_id, context, entities, response):
     loc = first_entity_value(entities, 'location')
@@ -74,8 +81,9 @@ def fetch_weather(sender_id, context):
 def set_action():
     # Setup Actions
     actions = {
+        'say'  : say,
         'merge': merge,
-        'fetch-weather': fetch_weather
+        'fetch-weather': fetch_weather,
     }
 
     # Setup Wit Client
