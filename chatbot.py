@@ -27,7 +27,7 @@ from flask import Flask, request
 # Wit.ai parameters
 #WIT_TOKEN = os.environ.get('WIT_TOKEN')
 
-WIT_TOKEN = ''
+WIT_TOKEN = 'GLEQMX7YW4IR4TM5S5B2TUBPWJTCFDQQ'
 # Messenger API parameters
 FB_PAGE_TOKEN = os.environ.get('FB_PAGE_TOKEN')
 # A user secret to verify webhook get request.
