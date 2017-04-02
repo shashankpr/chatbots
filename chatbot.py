@@ -152,11 +152,22 @@ def getWeather(request):
             del context['forecast']
     return context
 
+def getName(request):
+    context = request['context']
+    #context = {}
+    entities = request['entities']
+
+    user_name = first_entity_value(entities, 'names')
+    if user_name:
+        context['user_name'] = user_name
+    return context
+
 # Setup Actions
 actions = {
     'send': send,
     'merge': merge,
     'getWeather': getWeather,
+    'getName' : getName,
 }
 
 # Setup Wit Client
