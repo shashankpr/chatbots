@@ -22,6 +22,7 @@ import requests
 from sys import argv
 from wit import Wit
 from flask import Flask, request
+import weather
 
 # Wit.ai parameters
 WIT_TOKEN = os.environ.get('WIT_TOKEN')
@@ -142,7 +143,7 @@ def getWeather(request):
     loc = context['location']
     if loc:
         # This is where we could use a weather service api to get the weather.
-        context['forecast'] = 'sunny'
+        context['forecast'] = weather.inWeather(loc)
         if context.get('missingLocation') is not None:
             del context['missingLocation']
         del context['location']
