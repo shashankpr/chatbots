@@ -19,10 +19,16 @@
 
 import os
 import requests
+import logging
 from sys import argv
+
 from wit import Wit
 from flask import Flask, request
+
 import weather
+
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Wit.ai parameters
 WIT_TOKEN = os.environ.get('WIT_TOKEN')
