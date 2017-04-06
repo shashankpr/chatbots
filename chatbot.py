@@ -182,7 +182,7 @@ def getTime(request):
         context['country_time'] = worldtime.world_time(loc)
         if context.get('missingCountry') is not None:
             del context['missingCountry']
-        #del context['timeLocation']
+        del context['timeLocation']
     else:
         context['missingCountry'] = True
         if context.get('country_time') is not None:
