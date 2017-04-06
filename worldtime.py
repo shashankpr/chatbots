@@ -59,4 +59,4 @@ def world_time(location):
 
 
     local_time = local_time.strftime(format)
-    return local_time
+    return str(local_time)
