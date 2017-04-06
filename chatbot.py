@@ -140,7 +140,7 @@ def merge(request):
     loc = first_entity_value(entities, 'location')
     timeLocation = first_entity_value(entities, 'location')
     if loc:
-        context['location'] = loc
+        context['weatherLocation'] = loc
         context['timeLocation'] = loc
     return context
 
@@ -150,13 +150,13 @@ def getWeather(request):
     context = request['context']
     entities = request['entities']
     #loc = first_entity_value(entities, 'loc')
-    loc = context['location']
-    del context['location']
+    loc = context['weatherLocation']
     if loc:
         # This is where we could use a weather service api to get the weather.
         context['forecast'] = weather.inWeather(loc)
         if context.get('missingLocation') is not None:
             del context['missingLocation']
+        del context['location']
     else:
         context['missingLocation'] = True
         if context.get('forecast') is not None:
@@ -177,11 +177,11 @@ def getTime(request):
     context = request['context']
     entities = request['entities']
     loc = context['timeLocation']
-    del context['timeLocation']
     if loc:
         context['country_time'] = worldtime.world_time(loc)
         if context['missingCountry'] is not None:
             del context['missingCountry']
+        del context['timeLocation']
     else:
         context['missingCountry'] = True
         if context.get('country_time') is not None:
