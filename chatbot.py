@@ -26,8 +26,10 @@ from sys import argv
 from wit import Wit
 from flask import Flask, request
 
-import weather
 
+# Import APIs & Services
+import weather
+import worldtime
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -134,9 +136,11 @@ def send(request, response):
 def merge(request):
     context = request['context']
     entities = request['entities']
+    print entities
     loc = first_entity_value(entities, 'location')
     if loc:
-        context['location'] = loc
+        context['weatherLocation'] = loc
+        context['timeLocation'] = loc
     return context
 
 
@@ -145,13 +149,13 @@ def getWeather(request):
     context = request['context']
     entities = request['entities']
     #loc = first_entity_value(entities, 'loc')
-    loc = context['location']
+    del context['timeLocation']
+    loc = context['weatherLocation']
     if loc:
         # This is where we could use a weather service api to get the weather.
         context['forecast'] = weather.inWeather(loc)
         if context.get('missingLocation') is not None:
             del context['missingLocation']
-        del context['location']
     else:
         context['missingLocation'] = True
         if context.get('forecast') is not None:
@@ -168,12 +172,29 @@ def getName(request):
         context['user_name'] = user_name
     return context
 
+def getTime(request):
+    context = request['context']
+    entities = request['entities']
+    del context['weatherLocation']
+    loc = context['timeLocation']
+    if loc:
+        context['country_time'] = worldtime.world_time(loc)
+        if context.get('missingCountry') is not None:
+            del context['missingCountry']
+    else:
+        context['missingCountry'] = True
+        if context.get('country_time') is not None:
+            del context['country_time']
+
+    return context
+
 # Setup Actions
 actions = {
     'send': send,
     'merge': merge,
     'getWeather': getWeather,
     'getName' : getName,
+    'getTime' : getTime,
 }
 
 # Setup Wit Client
