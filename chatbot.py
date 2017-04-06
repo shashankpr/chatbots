@@ -86,7 +86,10 @@ def messenger_post():
                 print "Message Received: %s  -- %s" %(text,fb_id)
                 # Let's forward the message to the Wit.ai Bot Engine
                 # We handle the response in the function send()
-                client.run_actions(session_id=fb_id, message=text)
+                try:
+                    client.run_actions(session_id=fb_id, message=text)
+                except:
+                    del data
     else:
         # Returned another event
         return 'Received Different Event'
