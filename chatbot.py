@@ -86,7 +86,11 @@ def messenger_post():
                 print "Message Received: %s  -- %s" %(text,fb_id)
                 # Let's forward the message to the Wit.ai Bot Engine
                 # We handle the response in the function send()
-                client.run_actions(session_id=fb_id, message=text)
+                try:
+                    client.run_actions(session_id=fb_id, message=text)
+                except:
+                    # Delete messages else it keeps looping on error
+                    del data
     else:
         # Returned another event
         return 'Received Different Event'
@@ -153,9 +157,16 @@ def getWeather(request):
     loc = context['weatherLocation']
     if loc:
         # This is where we could use a weather service api to get the weather.
-        context['forecast'] = weather.inWeather(loc)
-        if context.get('missingLocation') is not None:
-            del context['missingLocation']
+        try:
+            context['forecast'] = weather.inWeather(loc)
+            if context.get('missingLocation') is not None:
+                del context['missingLocation']
+        except:
+            context['default'] = True
+            del context['weatherLocation']
+
+            # Delete session ID to stop looping
+            del request['session_id']
     else:
         context['missingLocation'] = True
         if context.get('forecast') is not None:
@@ -178,9 +189,16 @@ def getTime(request):
     del context['weatherLocation']
     loc = context['timeLocation']
     if loc:
-        context['country_time'] = worldtime.world_time(loc)
-        if context.get('missingCountry') is not None:
-            del context['missingCountry']
+        try:
+            context['country_time'] = worldtime.world_time(loc)
+            if context.get('missingCountry') is not None:
+                del context['missingCountry']
+        except:
+            context['default'] = True
+            del context['timeLocation']
+
+            # Delete session ID to stop looping
+            del request['session_id']
     else:
         context['missingCountry'] = True
         if context.get('country_time') is not None:
