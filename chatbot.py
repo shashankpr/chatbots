@@ -140,7 +140,7 @@ def merge(request):
     loc = first_entity_value(entities, 'location')
     timeLocation = first_entity_value(entities, 'location')
     if loc:
-        #context['location'] = loc
+        context['location'] = loc
         context['timeLocation'] = loc
     return context
 
