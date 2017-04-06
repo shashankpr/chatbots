@@ -163,7 +163,6 @@ def getWeather(request):
         except:
             context['default'] = True
             del context['weatherLocation']
-            del request['session_id']
     else:
         context['missingLocation'] = True
         if context.get('forecast') is not None:
@@ -193,7 +192,6 @@ def getTime(request):
         except:
             context['default'] = True
             del context['timeLocation']
-            del request['session_id']
     else:
         context['missingCountry'] = True
         if context.get('country_time') is not None:
