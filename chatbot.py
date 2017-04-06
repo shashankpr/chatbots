@@ -26,8 +26,10 @@ from sys import argv
 from wit import Wit
 from flask import Flask, request
 
-import weather
 
+# Import APIs & Services
+import weather
+import worldtime
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -168,12 +170,29 @@ def getName(request):
         context['user_name'] = user_name
     return context
 
+def getTime(request):
+    context = request['context']
+    entities = request['entities']
+    loc = context['timeLocation']
+    if loc:
+        context['country_time'] = worldtime.world_time(loc)
+        if context['missingCountry'] is not None:
+            del context['missingCountry']
+        del context['timeLocation']
+    else:
+        context['missingCountry'] = True
+        if context.get('country_time') is not None:
+            del context['country_time']
+
+    return context
+
 # Setup Actions
 actions = {
     'send': send,
     'merge': merge,
     'getWeather': getWeather,
     'getName' : getName,
+    'getTime' : getTime,
 }
 
 # Setup Wit Client
