@@ -54,11 +54,11 @@ def messenger_webhook():
     """
     A webhook to return a challenge
     """
-    verify_token = request.args.get('hub.verify_token')
+    verify_token = request.args['hub.verify_token']
     # check whether the verify tokens match
     if verify_token == FB_VERIFY_TOKEN:
         # respond with the challenge to confirm
-        challenge = request.args.get('hub.challenge')
+        challenge = request.args['hub.challenge']
         return challenge
     else:
         return 'Invalid Request or Verification Token'
@@ -160,6 +160,7 @@ def getWeather(request):
         except:
             context['default'] = True
             del context['weatherLocation']
+            del request['session_id']
     else:
         context['missingLocation'] = True
         if context.get('forecast') is not None:
@@ -189,6 +190,7 @@ def getTime(request):
         except:
             context['default'] = True
             del context['timeLocation']
+            del request['session_id']
     else:
         context['missingCountry'] = True
         if context.get('country_time') is not None:
