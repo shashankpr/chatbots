@@ -138,7 +138,6 @@ def merge(request):
     entities = request['entities']
     print entities
     loc = first_entity_value(entities, 'location')
-    timeLocation = first_entity_value(entities, 'location')
     if loc:
         context['weatherLocation'] = loc
         context['timeLocation'] = loc
