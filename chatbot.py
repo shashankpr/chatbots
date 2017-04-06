@@ -193,7 +193,7 @@ def getTime(request):
 actions = {
     'send': send,
     'merge': merge,
-    'getWeather': getWeather,
+    #'getWeather': getWeather,
     'getName' : getName,
     'getTime' : getTime,
 }
