@@ -1,6 +1,11 @@
+import settings
 import pyowm
 
-owm = pyowm.OWM('929d3119163895b3abe69e0c5905f1bd')
+# OWM API TOKEN Parameters
+OWM_API_TOKEN = settings.OWM_API_TOKEN
+
+# Initialize OWM Class
+owm = pyowm.OWM(OWM_API_TOKEN)
 #forecast = owm.daily_forecast("London")
 
 def inWeather(location):

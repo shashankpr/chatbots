@@ -20,6 +20,7 @@
 import os
 import requests
 import logging
+import settings
 from sys import argv
 
 from wit import Wit
@@ -30,17 +31,15 @@ import weather
 
 logging.basicConfig(level=logging.DEBUG)
 
-# Wit.ai parameters
-WIT_TOKEN = os.environ.get('WIT_TOKEN')
-#WIT_TOKEN = 'GLEQMX7YW4IR4TM5S5B2TUBPWJTCFDQQ'
+# Wit.ai API parameters
+WIT_TOKEN = settings.WIT_TOKEN
+
 # Messenger API parameters
-FB_PAGE_TOKEN = os.environ.get('FB_PAGE_TOKEN')
-#FB_PAGE_TOKEN = 'EAACyYurnCYEBANLpIzLGAYA38fGeIXwS0v0q4LiZC7eH45LLnGMNe43ePXRYYDqWthXuW1qRJ5IZBxV3Ipek5ZCe3iMs0hZCZAN4BAOLZB41pHUTT0sZBVxEZAZCsiYckz1PDgAJVqzQMMhVAZCHzcKY49rtjwIO5lKeM8nUZBGTxGWCwZDZD'
+FB_PAGE_TOKEN = settings.FB_PAGE_TOKEN
 
 # A user secret to verify webhook get request.
-FB_VERIFY_TOKEN = os.environ.get('FB_VERIFY_TOKEN')
+FB_VERIFY_TOKEN = settings.FB_VERIFY_TOKEN
 
-#FB_VERIFY_TOKEN = 'mischief_managed'
 
 # Setup Flask Server
 
