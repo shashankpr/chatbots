@@ -11,3 +11,4 @@ logging
 pyowm
 python-dotenv
 googlemaps
+SpeechRecognition
