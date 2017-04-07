@@ -30,6 +30,7 @@ def get_city_id(location):
 	city_id = registry_id.id_for(location)
 
 	logging.info("ID : {}".format(city_id))
+	print city_id
 	return city_id
 
 def get_time(location):
@@ -44,4 +45,10 @@ def get_time(location):
 
 	return str(local_time.strftime(format))
 
-
+def get_latlong(location):
+	city_id = get_city_id(location)
+	obs = owm.weather_at_id(city_id)
+	l = obs.get_location()
+	lat = l.get_lat()
+	lon = l.get_lon()
+	return ((lat,lon))
