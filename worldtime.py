@@ -43,7 +43,7 @@ def world_time(location):
 
     format = "%A, %d. %B, %H:%M:%S"
 
-    #location_latlong = geocode_location(location)
+    #retreiving coords from owm
     location_latlong = weather.get_latlong(location)
     api_response  = gmaps.timezone(location_latlong)
 
@@ -62,10 +62,3 @@ def world_time(location):
 
     local_time = local_time.strftime(format)
     return str(local_time)
-
-country_name = 'India'
-city_name = 'Boston'
-name = 'Chirag here'
-world_time(country_name)
-world_time(city_name)
-world_time(name)
