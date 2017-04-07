@@ -178,7 +178,7 @@ def getName(request):
     #context = {}
     entities = request['entities']
 
-    user_name = first_entity_value(entities, 'names')
+    user_name = first_entity_value(entities, 'contact')
     if user_name:
         context['user_name'] = user_name
     return context
