@@ -156,7 +156,7 @@ def getWeather(request):
     del context['timeLocation']
     loc = context['weatherLocation']
     if loc:
-        # This is where we could use a weather service api to get the weather.
+        # This is where we use a weather service api to get the weather.
         try:
             context['forecast'] = weather.inWeather(loc)
             if context.get('missingLocation') is not None:

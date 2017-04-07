@@ -44,4 +44,13 @@ def get_time(location):
 
 	return str(local_time.strftime(format))
 
-
+def get_latlong(location):
+	"""
+	This method return the coordinates of the location.
+	"""
+	city_id = get_city_id(location)
+	obs = owm.weather_at_id(city_id)
+	l = obs.get_location()
+	lat = l.get_lat()
+	lon = l.get_lon()
+	return ((lat,lon))

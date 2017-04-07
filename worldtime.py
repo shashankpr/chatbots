@@ -2,6 +2,7 @@ import settings
 import googlemaps
 from datetime import datetime
 from datetime import timedelta
+import weather
 
 GOOGLE_MAPS_TOKEN = settings.GOOGLE_MAPS_TOKEN
 
@@ -11,8 +12,8 @@ gmaps = googlemaps.Client(key=GOOGLE_MAPS_TOKEN)
 
 def geocode_location(location):
     """
-    :param location: 
-    :return: 
+    :param location:
+    :return:
     """
     geocode_result = gmaps.geocode(location)
 
@@ -31,8 +32,8 @@ def reverse_geocode(coordinates):
 
 def world_time(location):
     """
-    :param location: 
-    :return: 
+    :param location:
+    :return:
     """
     # Format is as follows :
     # %A Day
@@ -42,7 +43,8 @@ def world_time(location):
 
     format = "%A, %d. %B, %H:%M:%S"
 
-    location_latlong = geocode_location(location)
+    #retreiving coords from owm
+    location_latlong = weather.get_latlong(location)
     api_response  = gmaps.timezone(location_latlong)
 
     # Daylight savings offset
