@@ -132,7 +132,6 @@ def fb_message(sender_id, text):
                          headers={'Content-type': 'application/json'})
     return resp.content
 
-
 def speech_to_wit(audio_url):
     """
 
@@ -154,7 +153,6 @@ def speech_to_wit(audio_url):
         response = client.speech(f, None, header)
 
     return response
-
 
 def first_entity_value(entities, entity):
     """
@@ -188,7 +186,7 @@ def merge(request):
         context['timeLocation'] = loc
     return context
 
-
+### Services and APIs
 
 def getWeather(request):
     context = request['context']
@@ -216,12 +214,14 @@ def getWeather(request):
 
 def getName(request):
     context = request['context']
-    #context = {}
-    entities = request['entities']
 
-    user_name = first_entity_value(entities, 'contact')
-    if user_name:
-        context['user_name'] = user_name
+    # Get user name from the Messenger API
+    sender_id = request['session_id']
+    resp = requests.get("https://graph.facebook.com/v2.6/" + sender_id,
+                        params={"access_token": FB_PAGE_TOKEN})
+
+    sender_name = resp.json()['first_name']
+    context['sender_name'] = sender_name
     return context
 
 def getTime(request):
