@@ -84,20 +84,10 @@ def messenger_post():
                 # We retrieve the message content
                 # Check for message type - Text or Audio
                 try:
-                    text = message['message']['text']
-                    logging.debug("Message Received: %s  -- %s" %(text,fb_id))
-                    # Let's forward the message to the Wit.ai Bot Engine
-                    # We handle the response in the function send()
-                    try:
-                        client.run_actions(session_id=fb_id, message=text)
-                    except:
-                        # Delete messages else it keeps looping on error
-                        del data
-                except:
                     # Check if it's Audio type
-                    msg_type = message['message']['attachment']['type']
+                    msg_type = message['message']['attachments'][0]['type']
                     if msg_type == 'audio':
-                        audio_url = message['message']['attachment']['payload']['url']
+                        audio_url = message['message']['attachments'][0]['payload']['url']
                         logging.info("Audio URL : {}".format(audio_url))
 
                         speech_response = speech_to_wit(audio_url=audio_url)
@@ -109,6 +99,16 @@ def messenger_post():
                             del data
                     else:
                         logging.debug("Not Audio Type")
+                except:
+                    text = message['message']['text']
+                    logging.debug("Message Received: %s  -- %s" % (text, fb_id))
+                    # Let's forward the message to the Wit.ai Bot Engine
+                    # We handle the response in the function send()
+                    try:
+                        client.run_actions(session_id=fb_id, message=text)
+                    except:
+                        # Delete messages else it keeps looping on error
+                        del data
     else:
         # Returned another event
         return 'Received Different Event'
