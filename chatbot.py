@@ -114,12 +114,6 @@ def fb_message(sender_id, text):
                          headers={'Content-type': 'application/json'})
     return resp.content
 
-def getFB_profile(sender_id):
-    resp = requests.get("https://graph.facebook.com/v2.6/" + sender_id,
-                        params={"access_token": FB_PAGE_TOKEN})
-
-    print resp.json()['first_name']
-
 def first_entity_value(entities, entity):
     """
     Returns first entity value
@@ -152,7 +146,7 @@ def merge(request):
         context['timeLocation'] = loc
     return context
 
-
+### Services and APIs
 
 def getWeather(request):
     context = request['context']
@@ -180,15 +174,13 @@ def getWeather(request):
 
 def getName(request):
     context = request['context']
-    #context = {}
-    entities = request['entities']
 
+    # Get user name from the Messenger API
     sender_id = request['session_id']
     resp = requests.get("https://graph.facebook.com/v2.6/" + sender_id,
                         params={"access_token": FB_PAGE_TOKEN})
 
     sender_name = resp.json()['first_name']
-    #user_name = first_entity_value(entities, 'contact')
     context['sender_name'] = sender_name
     return context
 
