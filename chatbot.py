@@ -143,14 +143,14 @@ def speech_to_wit(audio_url):
     # Download the URL
 
     r = requests.get(audio_url)
-    with open('audio.mp3', 'wb') as f:
+    with open('audio.wav', 'wb') as f:
         f.write(r.content)
 
     logging.debug("Audio file received")
 
     response = None
     header = {'Content-Type': 'audio/mpeg3'}
-    with open('audio.mp3', 'rb') as f:
+    with open('audio.wav', 'rb') as f:
         response = client.speech(f, None, header)
 
     return response
