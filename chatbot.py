@@ -82,15 +82,33 @@ def messenger_post():
                 # We retrieve the Facebook user ID of the sender
                 fb_id = message['sender']['id']
                 # We retrieve the message content
-                text = message['message']['text']
-                print "Message Received: %s  -- %s" %(text,fb_id)
-                # Let's forward the message to the Wit.ai Bot Engine
-                # We handle the response in the function send()
+                # Check for message type - Text or Audio
                 try:
-                    client.run_actions(session_id=fb_id, message=text)
+                    # Check if it's Audio type
+                    msg_type = message['message']['attachments'][0]['type']
+                    if msg_type == 'audio':
+                        audio_url = message['message']['attachments'][0]['payload']['url']
+                        logging.info("Audio URL : {}".format(audio_url))
+
+                        speech_response = speech_to_wit(audio_url=audio_url)
+                        logging.info(" Response from WIT : {}".format(speech_response))
+                        try:
+                            client.run_actions(session_id=fb_id, message=speech_response)
+                        except:
+                            # Delete messages else it keeps looping on error
+                            del data
+                    else:
+                        logging.debug("Not Audio Type")
                 except:
-                    # Delete messages else it keeps looping on error
-                    del data
+                    text = message['message']['text']
+                    logging.debug("Message Received: %s  -- %s" % (text, fb_id))
+                    # Let's forward the message to the Wit.ai Bot Engine
+                    # We handle the response in the function send()
+                    try:
+                        client.run_actions(session_id=fb_id, message=text)
+                    except:
+                        # Delete messages else it keeps looping on error
+                        del data
     else:
         # Returned another event
         return 'Received Different Event'
@@ -113,6 +131,29 @@ def fb_message(sender_id, text):
                          json=data,
                          headers={'Content-type': 'application/json'})
     return resp.content
+
+
+def speech_to_wit(audio_url):
+    """
+
+    :param audio_url: 
+    :return: response as per Wit.AI API docs
+    """
+
+    # Download the URL
+
+    r = requests.get(audio_url)
+    with open('audio.wav', 'wb') as f:
+        f.write(r.content)
+
+    logging.debug("Audio file received")
+
+    response = None
+    header = {'Content-Type': 'audio/mpeg3'}
+    with open('audio.wav', 'rb') as f:
+        response = client.speech(f, None, header)
+
+    return response
 
 
 def first_entity_value(entities, entity):
