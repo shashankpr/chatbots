@@ -114,6 +114,11 @@ def fb_message(sender_id, text):
                          headers={'Content-type': 'application/json'})
     return resp.content
 
+def getFB_profile(sender_id):
+    resp = requests.get("https://graph.facebook.com/v2.6/" + sender_id,
+                        params={"access_token": FB_PAGE_TOKEN})
+
+    print resp.json()['first_name']
 
 def first_entity_value(entities, entity):
     """
@@ -178,9 +183,13 @@ def getName(request):
     #context = {}
     entities = request['entities']
 
-    user_name = first_entity_value(entities, 'contact')
-    if user_name:
-        context['user_name'] = user_name
+    sender_id = request['session_id']
+    resp = requests.get("https://graph.facebook.com/v2.6/" + sender_id,
+                        params={"access_token": FB_PAGE_TOKEN})
+
+    sender_name = resp.json()['first_name']
+    #user_name = first_entity_value(entities, 'contact')
+    context['sender_name'] = sender_name
     return context
 
 def getTime(request):
