@@ -30,6 +30,7 @@ from flask import Flask, request
 # Import APIs & Services
 import weather
 import worldtime
+import movies
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -183,6 +184,15 @@ def getName(request):
         context['user_name'] = user_name
     return context
 
+def getMovieRating(request):
+    context = request['context']
+    entities = request['entities']
+
+    mov = first_entity_value(entities, 'movies')
+    if mov:
+        context['movies'] = movies.get_review(mov)
+    return context
+
 def getTime(request):
     context = request['context']
     entities = request['entities']
@@ -213,6 +223,7 @@ actions = {
     'getWeather': getWeather,
     'getName' : getName,
     'getTime' : getTime,
+    'getMovieRating' : getMovieRating,
 }
 
 # Setup Wit Client
