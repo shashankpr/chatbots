@@ -77,3 +77,7 @@ def messenger_post():
         # Returned another event
         return 'Received Different Event'
     return 'OK'
+
+if __name__ == '__main__':
+    # Run Server
+    app.run()

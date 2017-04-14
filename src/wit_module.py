@@ -179,7 +179,3 @@ class CallWit(object):
         }
         client = Wit(access_token=self.WIT_TOKEN, actions=actions)
         client.interactive()
-
-
-w = CallWit()
-w.wit_interactive()
