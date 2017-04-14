@@ -1,35 +1,13 @@
-#!/usr/bin/env python
-# coding:utf-8
-
-# Messenger API integration example
-# We assume you have:
-# * a Wit.ai bot setup (https://wit.ai/docs/quickstart)
-# * a Messenger Platform setup (https://developers.facebook.com/docs/messenger-platform/quickstart)
-# You need to `pip install the following dependencies: requests, bottle.
-#
-# 1. pip install requests bottle
-# 2. You can run this example on a cloud service provider like Heroku, Google Cloud Platform or AWS.
-#    Note that webhooks must have a valid SSL certificate, signed by a certificate authority and won't work on your localhost.
-# 3. Set your environment variables e.g. WIT_TOKEN=your_wit_token
-#                                        FB_PAGE_TOKEN=your_page_token
-#                                        FB_VERIFY_TOKEN=your_verify_token
-# 4. Run your server e.g. python examples/messenger.py {PORT}
-# 5. Subscribe your page to the Webhooks using verify_token and `https://<your_host>/webhook` as callback URL.
-# 6. Talk to your bot on Messenger!
-
-import os
-import requests
 import logging
-import settings
-from sys import argv
 
-from wit import Wit
+import requests
 from flask import Flask, request
-
-
 # Import APIs & Services
-import weather
-import worldtime
+from services import weather
+from wit import Wit
+
+from src import settings
+from src.services import worldtime
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -41,7 +19,6 @@ FB_PAGE_TOKEN = settings.FB_PAGE_TOKEN
 
 # A user secret to verify webhook get request.
 FB_VERIFY_TOKEN = settings.FB_VERIFY_TOKEN
-
 
 # Setup Flask Server
 
@@ -124,7 +101,7 @@ def fb_message(sender_id, text):
         'message': {'text': text}
     }
     # Setup the query string with your PAGE TOKEN
-    #qs = 'access_token=' + FB_PAGE_TOKEN
+    # qs = 'access_token=' + FB_PAGE_TOKEN
     # Send POST request to messenger
     resp = requests.post("https://graph.facebook.com/v2.6/me/messages",
                          params={"access_token": FB_PAGE_TOKEN},
@@ -132,9 +109,10 @@ def fb_message(sender_id, text):
                          headers={'Content-type': 'application/json'})
     return resp.content
 
+
 def speech_to_wit(audio_url):
     """
-
+ 
     :param audio_url: 
     :return: response as per Wit.AI API docs
     """
@@ -153,6 +131,7 @@ def speech_to_wit(audio_url):
         response = client.speech(f, None, header)
 
     return response
+
 
 def first_entity_value(entities, entity):
     """
@@ -176,6 +155,7 @@ def send(request, response):
     # send message
     fb_message(fb_id, text)
 
+
 def merge(request):
     context = request['context']
     entities = request['entities']
@@ -186,12 +166,13 @@ def merge(request):
         context['timeLocation'] = loc
     return context
 
+
 ### Services and APIs
 
 def getWeather(request):
     context = request['context']
     entities = request['entities']
-    #loc = first_entity_value(entities, 'loc')
+    # loc = first_entity_value(entities, 'loc')
     del context['timeLocation']
     loc = context['weatherLocation']
     if loc:
@@ -212,6 +193,7 @@ def getWeather(request):
             del context['forecast']
     return context
 
+
 def getName(request):
     context = request['context']
 
@@ -223,6 +205,7 @@ def getName(request):
     sender_name = resp.json()['first_name']
     context['sender_name'] = sender_name
     return context
+
 
 def getTime(request):
     context = request['context']
@@ -247,13 +230,14 @@ def getTime(request):
 
     return context
 
+
 # Setup Actions
 actions = {
     'send': send,
     'merge': merge,
     'getWeather': getWeather,
-    'getName' : getName,
-    'getTime' : getTime,
+    'getName': getName,
+    'getTime': getTime,
 }
 
 # Setup Wit Client

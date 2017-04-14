@@ -1,9 +1,8 @@
 import os
 from os.path import join, dirname
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+load_dotenv(find_dotenv())
 
 WIT_TOKEN = os.environ.get("WIT_TOKEN")
 FB_PAGE_TOKEN = os.environ.get("FB_PAGE_TOKEN")

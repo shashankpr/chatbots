@@ -1,5 +1,6 @@
 import requests
-import settings
+
+from src import settings
 
 FB_PAGE_TOKEN = settings.FB_PAGE_TOKEN
 

@@ -1,16 +1,16 @@
-from wit import Wit
 import logging
-import base64
-import uuid
 import sys
+import uuid
 from os import system
 
-sys.path.insert(0,'/Users/Shashank/Workspace_dev/Git/chatbots/')
+from wit import Wit
 
-import settings
-import weather
-import worldtime
-#import pyttsx
+sys.path.insert(0, '/Users/Shashank/Workspace_dev/Git/chatbots/')
+
+from src import settings
+from src.services import weather
+from src.services import worldtime
+# import pyttsx
 
 from speech import Speech
 
@@ -26,10 +26,12 @@ def generate_session_id():
     session_id = uuid.uuid4()
     return session_id
 
+
 def get_speech_to_text():
     s = Speech()
     speech_response = s.recognize_google()
     return speech_response
+
 
 def first_entity_value(entities, entity):
     """
@@ -63,6 +65,7 @@ def send(request, response):
     # engine.say(response_text)
     # engine.runAndWait()
 
+
 def merge(request):
     context = request['context']
     entities = request['entities']
@@ -73,10 +76,11 @@ def merge(request):
         context['timeLocation'] = loc
     return context
 
+
 def getWeather(request):
     context = request['context']
     entities = request['entities']
-    #loc = first_entity_value(entities, 'loc')
+    # loc = first_entity_value(entities, 'loc')
     del context['timeLocation']
     loc = context['weatherLocation']
     if loc:
@@ -97,15 +101,17 @@ def getWeather(request):
             del context['forecast']
     return context
 
+
 def getName(request):
     context = request['context']
-    #context = {}
+    # context = {}
     entities = request['entities']
 
     user_name = first_entity_value(entities, 'contact')
     if user_name:
         context['user_name'] = user_name
     return context
+
 
 def getTime(request):
     context = request['context']
@@ -130,13 +136,14 @@ def getTime(request):
 
     return context
 
+
 # Setup Actions
 actions = {
     'send': send,
     'merge': merge,
     'getWeather': getWeather,
-    'getName' : getName,
-    'getTime' : getTime,
+    'getName': getName,
+    'getTime': getTime,
 }
 
 session_id = generate_session_id()
@@ -144,10 +151,9 @@ speech_to_text = get_speech_to_text()
 # Setup Wit Client
 client = Wit(access_token=WIT_TOKEN, actions=actions)
 
-
 try:
-    client.run_actions(session_id=session_id, message= speech_to_text, max_steps=8)
+    client.run_actions(session_id=session_id, message=speech_to_text, max_steps=8)
 except (KeyboardInterrupt, EOFError):
     exit()
 
-#client.interactive()
+    # client.interactive()
