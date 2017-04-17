@@ -2,14 +2,12 @@ import sys
 from os import path
 import logging
 import pyowm
-
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from src import settings
+import api_settings
 
 logging.basicConfig(level=logging.DEBUG)
 
 # OWM API TOKEN Parameters
-OWM_API_TOKEN = settings.OWM_API_TOKEN
+OWM_API_TOKEN = api_settings.OWM_API_TOKEN
 
 # Initialize OWM Class
 owm = pyowm.OWM(OWM_API_TOKEN)
@@ -80,6 +78,4 @@ class CallWeather(object):
         lat = l.get_lat()
         lon = l.get_lon()
         return ((lat, lon))
-
-
 
