@@ -13,7 +13,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 # API Services
 from services.weather import CallWeather
 from services.worldtime import CallGoogleTime
-from services.curerncy_conversion import CurrencyRates
+from services.currency_conversion import CurrencyRates
 
 
 class CallWit(object):
