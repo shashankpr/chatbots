@@ -1,6 +1,6 @@
 import speech_recognition as sr
-import settings
-import logging
+
+from src import settings
 
 # Record Audio
 WIT_TOKEN = settings.WIT_TOKEN

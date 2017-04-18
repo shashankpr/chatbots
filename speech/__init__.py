@@ -1,9 +1,8 @@
-from speech import Speech
-import wit_speech
-import settings
-
-import sys
 import logging
+import sys
+
+import wit_speech
+from speech import Speech
 
 # Set default logging for the module. Client applications can use a custom
 # logging config to override defaults specified here
