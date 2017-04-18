@@ -182,8 +182,6 @@ class CallWit(object):
     def get_currency_conversion(self, request):
 
         context = request['context']
-        del context['timeLocation']
-        del context['weatherLocation']
 
         source_name = context['currencyNameSource']
         dest_name = context['currencyNameDest']
@@ -216,6 +214,6 @@ class CallWit(object):
         client.interactive()
 
 
-# if __name__ == '__main__':
-#    c = CallWit()
-#    c.wit_interactive()
+if __name__ == '__main__':
+    c = CallWit()
+    c.wit_interactive()
