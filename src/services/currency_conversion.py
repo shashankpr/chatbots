@@ -48,6 +48,7 @@ class CurrencyRates(object):
 
         try:
             conversion_rate = dest_rate / source_rate
+            conversion_rate = float("{0:.2f}".format(conversion_rate))
             logging.info(conversion_rate)
             return conversion_rate
         except:
