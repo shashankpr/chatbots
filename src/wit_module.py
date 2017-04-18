@@ -216,6 +216,6 @@ class CallWit(object):
         client.interactive()
 
 
-if __name__ == '__main__':
-    c = CallWit()
-    c.wit_interactive()
+# if __name__ == '__main__':
+#    c = CallWit()
+#    c.wit_interactive()
