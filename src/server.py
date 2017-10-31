@@ -57,7 +57,8 @@ def messenger_post():
                         speech_response = witObject.speech_to_wit(audio_url=audio_url)
                         # logging.info(" Response from WIT : {}".format(speech_response))
                         try:
-                            witObject.client.run_actions(session_id=fb_id, message=speech_response)
+                            # witObject.client.run_actions(session_id=fb_id, message=speech_response)
+                            witObject.client.message(msg=speech_response)
                         except:
                             # Delete messages else it keeps looping on error
                             del data
@@ -69,7 +70,9 @@ def messenger_post():
                     # Let's forward the message to the Wit.ai Bot Engine
                     # We handle the response in the function send()
                     try:
-                        witObject.client.run_actions(session_id=fb_id, message=text)
+                        # witObject.client.run_actions(session_id=fb_id, message=text)
+                        resp = witObject.client.message(msg=text)
+                        print resp
                     except:
                         # Delete messages else it keeps looping on error
                         del data

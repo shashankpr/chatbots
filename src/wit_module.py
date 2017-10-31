@@ -35,7 +35,7 @@ class CallWit(object):
         }
 
         # Setup Wit Client
-        self.client = Wit(access_token=self.WIT_TOKEN, actions=actions)
+        self.client = Wit(access_token=self.WIT_TOKEN)
 
     def speech_to_wit(self, audio_url):
         """
@@ -66,10 +66,10 @@ class CallWit(object):
         """
         if entity not in entities:
             return None
-        val = entities[entity][0]['value']
-        if not val:
+        entity_val = entities[entity][0]['value']
+        if not entity_val:
             return None
-        return val['value'] if isinstance(val, dict) else val
+        return entity_val['value'] if isinstance(entity_val, dict) else entity_val
 
     def send_fb(self, request, response):
         """
@@ -210,7 +210,7 @@ class CallWit(object):
             'getTime': self.getTime,
             'getConversion': self.get_currency_conversion,
         }
-        client = Wit(access_token=self.WIT_TOKEN, actions=actions)
+        client = Wit(access_token=self.WIT_TOKEN)
         client.interactive()
 
 
