@@ -37,6 +37,16 @@ class CallWit(object):
         # Setup Wit Client
         self.client = Wit(access_token=self.WIT_TOKEN)
 
+    def handle_message(self, user_query):
+        response = self.client.message(msg=user_query)
+        entities = response['entities']
+        entity = self.first_entity_value(entities=entities, entity='location')
+        print entity
+        if entity:
+            print "Cool"
+        else:
+            print "Null"
+
     def speech_to_wit(self, audio_url):
         """
         To Handle Audio files in Messenger
