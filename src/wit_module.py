@@ -13,6 +13,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 # API Services
 from services.weather import CallWeather
 from services.worldtime import CallGoogleTime
+from services.currency_conversion import CurrencyRates
 
 
 class CallWit(object):
@@ -30,6 +31,7 @@ class CallWit(object):
             'getWeather': self.getWeather,
             'getName': self.getName,
             'getTime': self.getTime,
+            'getConversion': self.get_currency_conversion,
         }
 
         # Setup Wit Client
@@ -96,9 +98,18 @@ class CallWit(object):
         entities = request['entities']
 
         loc = self.first_entity_value(entities, 'location')
-        if loc:
+
+        # Get context for currency conversion
+        currency_source = self.first_entity_value(entities, 'source')
+        currency_dest = self.first_entity_value(entities, 'destination')
+        if currency_source and currency_dest:
+            context['currencyNameSource'] = currency_source
+            context['currencyNameDest'] = currency_dest
+
+        elif loc:
             context['weatherLocation'] = loc
             context['timeLocation'] = loc
+
         return context
 
     # Services and APIs
@@ -168,6 +179,27 @@ class CallWit(object):
 
         return context
 
+    def get_currency_conversion(self, request):
+
+        context = request['context']
+
+        source_name = context['currencyNameSource']
+        dest_name = context['currencyNameDest']
+
+        currency_object = CurrencyRates()
+        if source_name and dest_name:
+            try:
+                context['conversionVal'] = currency_object.get_conversion_rate(source_name, dest_name)
+            except:
+                context['cur_default'] = True
+                del context['currencyNameSource']
+                del context['currencyNameDest']
+        else:
+            context['cur_default'] = True
+            del context['currencyNameSource']
+            del context['currencyNameDest']
+        return context
+
     def wit_interactive(self):
 
         actions = {
@@ -176,6 +208,12 @@ class CallWit(object):
             'getWeather': self.getWeather,
             'getName': self.getName,
             'getTime': self.getTime,
+            'getConversion': self.get_currency_conversion,
         }
         client = Wit(access_token=self.WIT_TOKEN, actions=actions)
         client.interactive()
+
+
+if __name__ == '__main__':
+    c = CallWit()
+    c.wit_interactive()

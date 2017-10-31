@@ -1,15 +1,10 @@
-import sys
-from os import path
 from datetime import datetime
 from datetime import timedelta
+import api_settings
 import googlemaps
 from weather import CallWeather
 
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from src import settings
-
-
-GOOGLE_MAPS_TOKEN = settings.GOOGLE_MAPS_TOKEN
+GOOGLE_MAPS_TOKEN = api_settings.GOOGLE_MAPS_TOKEN
 
 
 class CallGoogleTime(object):
