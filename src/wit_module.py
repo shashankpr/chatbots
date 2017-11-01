@@ -37,8 +37,9 @@ class CallWit(object):
         # Setup Wit Client
         self.client = Wit(access_token=self.WIT_TOKEN)
 
-    def handle_message(self,session_id, user_query):
+    def handle_message(self, session_id, user_query):
         response = self.client.message(msg=user_query)
+        print response
         entities = response['entities']
         entity = self.first_entity_value(entities=entities, entity='location')
         print entity
@@ -83,15 +84,15 @@ class CallWit(object):
             return None
         return entity_val['value'] if isinstance(entity_val, dict) else entity_val
 
-    def send_fb(self, request, response):
+    def send_fb(self, session_id, response):
         """
         Sender function
         """
         # We use the fb_id as equal to session_id
-        fb_id = request['session_id']
+        # fb_id = request['session_id']
         text = response['text']
         # send message
-        messenger.fb_message(fb_id, text)
+        messenger.fb_message(session_id, text)
 
     def send(self, request, response):
         """
