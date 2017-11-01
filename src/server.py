@@ -70,7 +70,7 @@ def messenger_post():
                     # Let's forward the message to the Wit.ai Bot Engine
                     # We handle the response in the function send()
                     try:
-                        witObject.handle_message(user_query=text)
+                        witObject.handle_message(session_id=fb_id, user_query=text)
                         # witObject.client.run_actions(session_id=fb_id, message=text)
                         # resp = witObject.client.message(msg=text)
                         # print resp

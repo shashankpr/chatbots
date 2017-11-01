@@ -37,7 +37,7 @@ class CallWit(object):
         # Setup Wit Client
         self.client = Wit(access_token=self.WIT_TOKEN)
 
-    def handle_message(self, user_query):
+    def handle_message(self,session_id, user_query):
         response = self.client.message(msg=user_query)
         entities = response['entities']
         entity = self.first_entity_value(entities=entities, entity='location')
@@ -46,6 +46,8 @@ class CallWit(object):
             print "Cool"
         else:
             print "Null"
+
+        self.send_fb(session_id, response)
 
     def speech_to_wit(self, audio_url):
         """
