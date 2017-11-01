@@ -39,6 +39,7 @@ class CallWit(object):
 
     def handle_message(self, session_id, user_query):
         response = self.client.message(msg=user_query)
+        print session_id
         print response
         entities = response['entities']
         entity = self.first_entity_value(entities=entities, entity='location')

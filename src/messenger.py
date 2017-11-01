@@ -19,4 +19,8 @@ def fb_message(sender_id, text):
                          params={"access_token": FB_PAGE_TOKEN},
                          json=data,
                          headers={'Content-type': 'application/json'})
+
+    # print resp.content
     return resp.content
+
+fb_message(1407266826015412, "test123")
