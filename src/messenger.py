@@ -20,7 +20,8 @@ def fb_message(sender_id, text):
                          json=data,
                          headers={'Content-type': 'application/json'})
 
-    # print resp.content
+    print resp.content
+    print data
     return resp.content
 
 fb_message(1407266826015412, "test123")
