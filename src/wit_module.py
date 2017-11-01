@@ -92,7 +92,7 @@ class CallWit(object):
         # fb_id = request['session_id']
         text = response['text']
         # send message
-        messenger.fb_message(session_id, text)
+        messenger.fb_message(session_id, "testing")
 
     def send(self, request, response):
         """
