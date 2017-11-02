@@ -6,7 +6,7 @@ from wit_module import CallWit
 
 app = Flask(__name__)
 
-FB_VERIFY_TOKEN = settings.FB_VERIFY_TOKEN
+FB_VERIFY_TOKEN_ID = settings.FB_VERIFY_TOKEN
 
 # Intialize Wit Class
 witObject = CallWit()
@@ -19,9 +19,9 @@ def messenger_webhook():
     A webhook to return a challenge
     """
     verify_token = request.args.get('hub.verify_token')
-    print verify_token
+    # print verify_token
     # check whether the verify tokens match
-    if verify_token == FB_VERIFY_TOKEN:
+    if verify_token == FB_VERIFY_TOKEN_ID:
         # respond with the challenge to confirm
         challenge = request.args.get('hub.challenge')
         return challenge
