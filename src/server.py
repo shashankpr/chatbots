@@ -19,6 +19,7 @@ def messenger_webhook():
     A webhook to return a challenge
     """
     verify_token = request.args.get('hub.verify_token')
+    print verify_token
     # check whether the verify tokens match
     if verify_token == FB_VERIFY_TOKEN:
         # respond with the challenge to confirm
@@ -38,6 +39,7 @@ def messenger_post():
     if data['object'] == 'page':
         for entry in data['entry']:
             # get all the messages
+            print entry
             messages = entry['messaging']
             if messages[0]:
                 # Get the first message
@@ -58,7 +60,7 @@ def messenger_post():
                         # logging.info(" Response from WIT : {}".format(speech_response))
                         try:
                             # witObject.client.run_actions(session_id=fb_id, message=speech_response)
-                            witObject.client.message(msg=speech_response)
+                            witObject.handle_message(session_id=fb_id, user_query=speech_response)
                         except:
                             # Delete messages else it keeps looping on error
                             del data
@@ -70,10 +72,10 @@ def messenger_post():
                     # Let's forward the message to the Wit.ai Bot Engine
                     # We handle the response in the function send()
                     try:
+                        # Using Wit's new /message api endpoint
                         witObject.handle_message(session_id=fb_id, user_query=text)
                         # witObject.client.run_actions(session_id=fb_id, message=text)
                         # resp = witObject.client.message(msg=text)
-                        # print resp
                     except:
                         # Delete messages else it keeps looping on error
                         del data
@@ -84,4 +86,4 @@ def messenger_post():
 
 if __name__ == '__main__':
     # Run Server
-    app.run()
+    app.run(debug=True)
