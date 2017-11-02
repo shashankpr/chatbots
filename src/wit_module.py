@@ -1,7 +1,7 @@
 import logging
 import sys
 from os import path
-
+import random
 import requests
 from wit import Wit
 
@@ -24,32 +24,57 @@ class CallWit(object):
         # Messenger API parameters
         self.FB_PAGE_TOKEN = settings.FB_PAGE_TOKEN
 
-        # Setup Actions
-        actions = {
-            'send': self.send_fb,
-            'merge': self.merge,
-            'getWeather': self.getWeather,
-            'getName': self.getName,
-            'getTime': self.getTime,
-            'getConversion': self.get_currency_conversion,
-        }
+        # Actions - Deprecated in new Wit API
+
+        # # Setup Actions
+        # actions = {
+        #     'send': self.send_fb,
+        #     'merge': self.merge,
+        #     'getWeather': self.getWeather,
+        #     'getName': self.getName,
+        #     'getTime': self.getTime,
+        #     'getConversion': self.get_currency_conversion,
+        # }
 
         # Setup Wit Client
         self.client = Wit(access_token=self.WIT_TOKEN)
 
-    def handle_message(self, session_id, user_query):
-        response = self.client.message(msg=user_query)
-        print session_id
-        print response
-        entities = response['entities']
-        entity = self.first_entity_value(entities=entities, entity='location')
-        print entity
-        if entity:
-            print "Cool"
-        else:
-            print "Null"
+        self.default_msg = "Sorry mate ! I didn't get what you said..."
+        self.welcome_msg = "Hey !! How can you help you today ? You can ask me about `Weather`, `Time` at a place and " \
+                           "I can also do some currency conversions !! "
 
-        self.send_fb(session_id, response)
+    def handle_message(self, session_id, user_query):
+        wit_response = self.client.message(msg=user_query)
+        logging.debug("Response from Wit : {}".format(wit_response))
+
+        user_name = self.getName(session_id)
+        entities = wit_response['entities']
+        context_dict = self.merge(wit_response)
+
+        greetings = self.first_entity_value(entities, 'greetings')
+        intent = self.first_entity_value(entities=entities, entity='intent')
+        logging.info("Intent obtained : {}".format(intent))
+
+        if intent == 'getWeather':
+            context = self.getWeather(context_dict)
+            messenger.fb_message(session_id, self.weather_replies(user_name, context))
+
+        elif intent == 'getTime':
+            context = self.getTime(context_dict)
+            messenger.fb_message(session_id, self.time_replies(user_name, context))
+
+        elif intent == 'curConvert':
+            context = self.get_currency_conversion(context_dict)
+            messenger.fb_message(session_id, self.currency_replies(user_name, context))
+
+        elif greetings == 'greetings':
+            messenger.fb_message(session_id, self.welcome_msg)
+
+        elif greetings == 'end':
+            messenger.fb_message(session_id, "See you soon then !!!")
+
+        else:
+            messenger.fb_message(session_id, self.default_msg)
 
     def speech_to_wit(self, audio_url):
         """
@@ -85,30 +110,11 @@ class CallWit(object):
             return None
         return entity_val['value'] if isinstance(entity_val, dict) else entity_val
 
-    def send_fb(self, session_id, response):
-        """
-        Sender function
-        """
-        # We use the fb_id as equal to session_id
-        # fb_id = request['session_id']
-        text = response['text']
-        # send message
-        messenger.fb_message(session_id, "testing")
-
-    def send(self, request, response):
-        """
-        Sender Function
-        :param request: 
-        :param response: 
-        :return: 
-        """
-        # We use the fb_id as equal to session_id
-        fb_id = request['session_id']
-        text = response['text']
-        print text
-
     def merge(self, request):
-        context = request['context']
+        try:
+            context = request['context']
+        except:
+            context = {}
         entities = request['entities']
 
         loc = self.first_entity_value(entities, 'location')
@@ -128,9 +134,9 @@ class CallWit(object):
 
     # Services and APIs
 
-    def getWeather(self, request):
-        context = request['context']
-        entities = request['entities']
+    def getWeather(self, context):
+        # context = request['context']
+        # entities = request['entities']
         # loc = first_entity_value(entities, 'loc')
         del context['timeLocation']
         loc = context['weatherLocation']
@@ -144,32 +150,31 @@ class CallWit(object):
                 if context.get('missingLocation') is not None:
                     del context['missingLocation']
             except:
-                context['default'] = True
+                context['weather_default'] = True
                 del context['weatherLocation']
 
                 # Delete session ID to stop looping
-                del request['session_id']
+                # del request['session_id']
         else:
             context['missingLocation'] = True
             if context.get('forecast') is not None:
                 del context['forecast']
         return context
 
-    def getName(self, request):
-        context = request['context']
+    def getName(self, session_id):
+        # context = request['context']
 
         # Get user name from the Messenger API
-        sender_id = request['session_id']
-        resp = requests.get("https://graph.facebook.com/v2.6/" + sender_id,
+        resp = requests.get("https://graph.facebook.com/v2.8/" + session_id,
                             params={"access_token": self.FB_PAGE_TOKEN})
 
+        print resp
         sender_name = resp.json()['first_name']
-        context['sender_name'] = sender_name
-        return context
+        return sender_name
 
-    def getTime(self, request):
-        context = request['context']
-        entities = request['entities']
+    def getTime(self, context):
+        # context = request['context']
+        # entities = request['entities']
         del context['weatherLocation']
         loc = context['timeLocation']
 
@@ -181,11 +186,11 @@ class CallWit(object):
                 if context.get('missingCountry') is not None:
                     del context['missingCountry']
             except:
-                context['default'] = True
+                context['time_default'] = True
                 del context['timeLocation']
 
                 # Delete session ID to stop looping
-                del request['session_id']
+                # del request['session_id']
         else:
             context['missingCountry'] = True
             if context.get('country_time') is not None:
@@ -193,9 +198,9 @@ class CallWit(object):
 
         return context
 
-    def get_currency_conversion(self, request):
+    def get_currency_conversion(self, context):
 
-        context = request['context']
+        # context = request['context']
 
         source_name = context['currencyNameSource']
         dest_name = context['currencyNameDest']
@@ -214,16 +219,43 @@ class CallWit(object):
             del context['currencyNameDest']
         return context
 
+    #  Replies from Wit
+
+    def weather_replies(self, user_name, context):
+        response_template = random.choice(
+            ['Hey {mention} ! Weather at {location} is {forecast}',
+             'Yo {mention}! It is {forecast} at {location}',
+             'Hi {mention} ! The weather is {weather} at {location}'
+             ])
+
+        return response_template.format(mention=user_name, location=context.get('weatherLocation'),
+                                        forecast=context.get('forecast'))
+
+    def time_replies(self, user_name, context):
+        response_template = random.choice(
+            ['Hey {mention} ! Time at {location} is {time}',
+             'Yo {mention}! It is {time} at {location}',
+             'The time is {time} at {location}...',
+             'Uno momento please {mention} ... The time is {time} at {location} !!'
+             ])
+
+        return response_template.format(mention=user_name, location=context.get('timeLocation'),
+                                        time=context.get('country_time'))
+
+    def currency_replies(self, user_name, context):
+        response_template = random.choice(
+            ['Hey {mention} ! 1 {source_currency} is equal to {conversion_val} {dest_currency}',
+             'Yo {mention} ! 1 {source_currency} is equal to {conversion_val} {dest_currency}',
+             'Just a moment ... Hey {mention} ! 1 {source_currency} is equal to '
+             '{conversion_val} {dest_currency}'
+             ])
+
+        return response_template.format(mention=user_name, source_currency=context.get('currencyNameSource'),
+                                        dest_currency=context.get('currencyNameDest'),
+                                        conversion_val=context.get('conversionVal'))
+
     def wit_interactive(self):
 
-        actions = {
-            'send': self.send,
-            'merge': self.merge,
-            'getWeather': self.getWeather,
-            'getName': self.getName,
-            'getTime': self.getTime,
-            'getConversion': self.get_currency_conversion,
-        }
         client = Wit(access_token=self.WIT_TOKEN)
         client.interactive()
 
