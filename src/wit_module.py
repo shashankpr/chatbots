@@ -52,6 +52,7 @@ class CallWit(object):
         entities = wit_response['entities']
         context_dict = self.merge(wit_response)
 
+        # TODO account for confidence values
         greetings = self.first_entity_value(entities, 'greetings')
         light_toggle = self.first_entity_value(entities, 'on_off')
         intent = self.first_entity_value(entities=entities, entity='intent')
@@ -69,6 +70,12 @@ class CallWit(object):
             context = self.get_currency_conversion(context_dict)
             messenger.fb_message(session_id, self.currency_replies(user_name, context))
 
+        elif greetings == 'greetings':
+            messenger.fb_message(session_id, self.welcome_msg)
+
+        elif greetings == 'end':
+            messenger.fb_message(session_id, "See you soon then !!!")
+
         elif light_toggle == 'on':
             messenger.fb_message(session_id, "Switching ON the light ...")
             self.turn_on_flux()
@@ -76,12 +83,6 @@ class CallWit(object):
         elif light_toggle == 'off':
             messenger.fb_message(session_id, "Switching OFF the light ...")
             self.turn_off_flux()
-
-        elif greetings == 'greetings':
-            messenger.fb_message(session_id, self.welcome_msg)
-
-        elif greetings == 'end':
-            messenger.fb_message(session_id, "See you soon then !!!")
 
         else:
             messenger.fb_message(session_id, self.default_msg)
