@@ -14,6 +14,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from services.weather import CallWeather
 from services.worldtime import CallGoogleTime
 from services.currency_conversion import CurrencyRates
+from services import flux_api
 
 
 class CallWit(object):
@@ -52,6 +53,7 @@ class CallWit(object):
         context_dict = self.merge(wit_response)
 
         greetings = self.first_entity_value(entities, 'greetings')
+        light_toggle = self.first_entity_value(entities, 'on_off')
         intent = self.first_entity_value(entities=entities, entity='intent')
         logging.info("Intent obtained : {}".format(intent))
 
@@ -66,6 +68,14 @@ class CallWit(object):
         elif intent == 'curConvert':
             context = self.get_currency_conversion(context_dict)
             messenger.fb_message(session_id, self.currency_replies(user_name, context))
+
+        elif light_toggle == 'on':
+            messenger.fb_message(session_id, "Switching ON the light ...")
+            self.turn_on_flux()
+
+        elif light_toggle == 'off':
+            messenger.fb_message(session_id, "Switching OFF the light ...")
+            self.turn_off_flux()
 
         elif greetings == 'greetings':
             messenger.fb_message(session_id, self.welcome_msg)
@@ -218,6 +228,18 @@ class CallWit(object):
             del context['currencyNameSource']
             del context['currencyNameDest']
         return context
+
+    def turn_on_flux(self):
+
+        ipaddr = flux_api.scan_bulb()
+        flux_api.switch_on(ipaddr)
+        return
+
+    def turn_off_flux(self):
+
+        ipaddr = flux_api.scan_bulb()
+        flux_api.switch_off(ipaddr)
+        return
 
     #  Replies from Wit
 
