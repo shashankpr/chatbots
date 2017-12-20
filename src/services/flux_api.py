@@ -5,6 +5,8 @@ def scan_bulb():
     scanner = BulbScanner()
     scanner.scan()
 
+    print scanner.found_bulbs
+
     ipaddr = scanner.found_bulbs[0]['ipaddr']
     return ipaddr
 
@@ -20,4 +22,5 @@ def switch_off(ipaddress):
 
 # if __name__ == '__main__':
 #     ipaddr = scan_bulb()
-    # switch_on(ipaddr)
+#     switch_on(ipaddr)
+#     switch_off(ipaddr)

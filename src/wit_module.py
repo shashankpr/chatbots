@@ -78,11 +78,11 @@ class CallWit(object):
 
         elif light_toggle == 'on':
             messenger.fb_message(session_id, "Switching ON the light ...")
-            self.turn_on_flux()
+            self.turn_on_flux(session_id)
 
         elif light_toggle == 'off':
             messenger.fb_message(session_id, "Switching OFF the light ...")
-            self.turn_off_flux()
+            self.turn_off_flux(session_id)
 
         else:
             messenger.fb_message(session_id, self.default_msg)
@@ -230,15 +230,25 @@ class CallWit(object):
             del context['currencyNameDest']
         return context
 
-    def turn_on_flux(self):
+    def turn_on_flux(self, session_id):
 
-        ipaddr = flux_api.scan_bulb()
+        ipaddr = ''
+        try:
+            ipaddr = flux_api.scan_bulb()
+        except:
+            messenger.fb_message(session_id, "The bulb doesn't seem to be online")
+
         flux_api.switch_on(ipaddr)
         return
 
-    def turn_off_flux(self):
+    def turn_off_flux(self, session_id):
 
-        ipaddr = flux_api.scan_bulb()
+        ipaddr = ''
+        try:
+            ipaddr = flux_api.scan_bulb()
+        except:
+            messenger.fb_message(session_id, "The bulb doesn't seem to be online")
+
         flux_api.switch_off(ipaddr)
         return
 
