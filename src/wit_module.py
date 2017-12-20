@@ -232,25 +232,25 @@ class CallWit(object):
 
     def turn_on_flux(self, session_id):
 
-        ipaddr = ''
         try:
             ipaddr = flux_api.scan_bulb()
+            flux_api.switch_on(ipaddr)
+            return
         except:
             messenger.fb_message(session_id, "The bulb doesn't seem to be online")
+            return
 
-        flux_api.switch_on(ipaddr)
-        return
 
     def turn_off_flux(self, session_id):
 
-        ipaddr = ''
         try:
             ipaddr = flux_api.scan_bulb()
+            flux_api.switch_off(ipaddr)
+            return
         except:
             messenger.fb_message(session_id, "The bulb doesn't seem to be online")
+            return
 
-        flux_api.switch_off(ipaddr)
-        return
 
     #  Replies from Wit
 
