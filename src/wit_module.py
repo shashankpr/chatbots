@@ -70,12 +70,6 @@ class CallWit(object):
             context = self.get_currency_conversion(context_dict)
             messenger.fb_message(session_id, self.currency_replies(user_name, context))
 
-        elif greetings == 'greetings':
-            messenger.fb_message(session_id, self.welcome_msg)
-
-        elif greetings == 'end':
-            messenger.fb_message(session_id, "See you soon then !!!")
-
         elif light_toggle == 'on':
             messenger.fb_message(session_id, "Switching ON the light ...")
             self.turn_on_flux(session_id)
@@ -83,6 +77,13 @@ class CallWit(object):
         elif light_toggle == 'off':
             messenger.fb_message(session_id, "Switching OFF the light ...")
             self.turn_off_flux(session_id)
+
+        elif greetings == 'greetings':
+            messenger.fb_message(session_id, self.welcome_msg)
+
+        elif greetings == 'end':
+            messenger.fb_message(session_id, "See you soon then !!!")
+
 
         else:
             messenger.fb_message(session_id, self.default_msg)
@@ -119,6 +120,21 @@ class CallWit(object):
         entity_val = entities[entity][0]['value']
         if not entity_val:
             return None
+
+        logging.debug("ENTITY VALUE {}".format(entity_val))
+        return entity_val['value'] if isinstance(entity_val, dict) else entity_val
+
+    def high_entity_value(self, entities, entity):
+        """
+        Returns first entity value
+        """
+        if entity not in entities:
+            return None
+        entity_val = entities[entity][0]['value']
+        if not entity_val:
+            return None
+
+        logging.debug("ENTITY VALUE {}".format(entity_val))
         return entity_val['value'] if isinstance(entity_val, dict) else entity_val
 
     def merge(self, request):
