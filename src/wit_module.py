@@ -55,8 +55,8 @@ class CallWit(object):
         # TODO account for confidence values
         greetings, greetings_score = self.first_entity_value(entities, 'greetings')
         light_toggle, light_toggle_score = self.first_entity_value(entities, 'on_off')
-        intent = self.first_entity_value(entities=entities, entity='intent')
-        logging.info("Intent obtained : {}".format(intent))
+        intent, intent_score = self.first_entity_value(entities=entities, entity='intent')
+        logging.info("Intent obtained : {} with score {}".format(intent, intent_score))
 
         if intent == 'getWeather':
             context = self.getWeather(context_dict)
