@@ -122,7 +122,7 @@ class CallWit(object):
         if not entity_val:
             return None
 
-        logging.debug("ENTITY VALUE, Score {}".format(entity_val, entity_score))
+        logging.debug("ENTITY VALUE, Score {}, {}".format(entity_val, entity_score))
         return (entity_val['value'], entity_val['confidence']) if isinstance(entity_val, dict) else (entity_val, entity_score)
 
     def high_entity_value(self, entities, entity):
