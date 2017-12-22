@@ -70,18 +70,26 @@ class CallWit(object):
             context = self.get_currency_conversion(context_dict)
             messenger.fb_message(session_id, self.currency_replies(user_name, context))
 
-        elif light_toggle == 'on' and light_toggle_score > greetings_score:
-            messenger.fb_message(session_id, "Switching ON the light ...")
-            self.turn_on_flux(session_id)
+        elif light_toggle == 'on':
+            if greetings and light_toggle_score > greetings_score:
+                messenger.fb_message(session_id, "Switching ON the light ...")
+                self.turn_on_flux(session_id)
+            else:
+                messenger.fb_message(session_id, "Switching ON the light ...")
+                self.turn_on_flux(session_id)
 
-        elif light_toggle == 'off' and light_toggle_score > greetings_score:
-            messenger.fb_message(session_id, "Switching OFF the light ...")
-            self.turn_off_flux(session_id)
+        elif light_toggle == 'off':
+            if greetings and light_toggle_score > greetings_score:
+                messenger.fb_message(session_id, "Switching OFF the light ...")
+                self.turn_off_flux(session_id)
+            else:
+                messenger.fb_message(session_id, "Switching OFF the light ...")
+                self.turn_off_flux(session_id)
 
-        elif greetings == 'greetings' and greetings_score > light_toggle_score:
+        elif greetings == 'greetings':
             messenger.fb_message(session_id, self.welcome_msg)
 
-        elif greetings == 'end' and greetings_score > light_toggle_score:
+        elif greetings == 'end':
             messenger.fb_message(session_id, "See you soon then !!!")
 
         else:
