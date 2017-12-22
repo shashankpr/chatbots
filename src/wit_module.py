@@ -53,8 +53,8 @@ class CallWit(object):
         context_dict = self.merge(wit_response)
 
         # TODO account for confidence values
-        greetings = self.first_entity_value(entities, 'greetings')
-        light_toggle = self.first_entity_value(entities, 'on_off')
+        greetings, greetings_score = self.first_entity_value(entities, 'greetings')
+        light_toggle, light_toggle_score = self.first_entity_value(entities, 'on_off')
         intent = self.first_entity_value(entities=entities, entity='intent')
         logging.info("Intent obtained : {}".format(intent))
 
@@ -70,20 +70,19 @@ class CallWit(object):
             context = self.get_currency_conversion(context_dict)
             messenger.fb_message(session_id, self.currency_replies(user_name, context))
 
-        elif light_toggle == 'on':
+        elif light_toggle == 'on' and light_toggle_score > greetings_score:
             messenger.fb_message(session_id, "Switching ON the light ...")
             self.turn_on_flux(session_id)
 
-        elif light_toggle == 'off':
+        elif light_toggle == 'off' and light_toggle_score > greetings_score:
             messenger.fb_message(session_id, "Switching OFF the light ...")
             self.turn_off_flux(session_id)
 
-        elif greetings == 'greetings':
+        elif greetings == 'greetings' and greetings_score > light_toggle_score:
             messenger.fb_message(session_id, self.welcome_msg)
 
-        elif greetings == 'end':
+        elif greetings == 'end' and greetings_score > light_toggle_score:
             messenger.fb_message(session_id, "See you soon then !!!")
-
 
         else:
             messenger.fb_message(session_id, self.default_msg)
@@ -113,7 +112,7 @@ class CallWit(object):
 
     def first_entity_value(self, entities, entity):
         """
-        Returns first entity value
+        Returns given entity value with its confidence score
         """
         if entity not in entities:
             return None
