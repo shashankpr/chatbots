@@ -52,27 +52,14 @@ class CallWit(object):
         entities = wit_response['entities']
         context_dict = self.merge(wit_response)
 
-        greetings, greetings_score = [], []
-        light_toggle, light_toggle_score = [], []
-        # intent, intent_score = [], []
-
         # TODO account for confidence values
-        try:
-            greetings, greetings_score = self.first_entity_value(entities, 'greetings')
-        except:
-            greetings = self.first_entity_value(entities, 'greetings')
 
-        try:
-            light_toggle, light_toggle_score = self.first_entity_value(entities, 'on_off')
-        except:
-            light_toggle = self.first_entity_value(entities, 'on_off')
+        greetings, greetings_score = self.first_entity_value(entities, 'greetings')
 
-        try:
-            intent, intent_score = self.first_entity_value(entities=entities, entity='intent')
-            logging.info("Intent obtained : {} with score {}".format(intent, intent_score))
-        except:
-            intent = self.first_entity_value(entities=entities, entity='intent')
+        light_toggle, light_toggle_score = self.first_entity_value(entities, 'on_off')
 
+        intent, intent_score = self.first_entity_value(entities=entities, entity='intent')
+        logging.info("Intent obtained : {} with score {}".format(intent, intent_score))
 
         if intent == 'getWeather':
             context = self.getWeather(context_dict)
@@ -138,11 +125,11 @@ class CallWit(object):
         Returns given entity value with its confidence score
         """
         if entity not in entities:
-            return None
+            return None, None
         entity_val = entities[entity][0]['value']
         entity_score = entities[entity][0]['confidence']
         if not entity_val:
-            return None
+            return None, None
 
         logging.debug("ENTITY VALUE, Score {}, {}".format(entity_val, entity_score))
         return (entity_val['value'], entity_val['confidence']) if isinstance(entity_val, dict) else (entity_val, entity_score)
