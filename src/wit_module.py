@@ -167,11 +167,11 @@ class CallWit(object):
             context = {}
         entities = request['entities']
 
-        loc = self.first_entity_value(entities, 'location')
+        loc, loc_score = self.first_entity_value(entities, 'location')
 
         # Get context for currency conversion
-        currency_source = self.first_entity_value(entities, 'source')
-        currency_dest = self.first_entity_value(entities, 'destination')
+        currency_source, currency_source_score = self.first_entity_value(entities, 'source')
+        currency_dest, currency_dest_score = self.first_entity_value(entities, 'destination')
         if currency_source and currency_dest:
             context['currencyNameSource'] = currency_source
             context['currencyNameDest'] = currency_dest
@@ -200,6 +200,7 @@ class CallWit(object):
                 if context.get('missingLocation') is not None:
                     del context['missingLocation']
             except:
+                logging.warning("Error from Weather API : {}".format(sys.exc_info()[0]))
                 context['weather_default'] = True
                 del context['weatherLocation']
 
@@ -238,6 +239,7 @@ class CallWit(object):
                 if context.get('missingCountry') is not None:
                     del context['missingCountry']
             except:
+                logging.warning("Error from Time API : {}".format(sys.exc_info()[0]))
                 context['time_default'] = True
                 del context['timeLocation']
 
@@ -263,6 +265,7 @@ class CallWit(object):
             try:
                 context['conversionVal'] = currency_object.get_conversion_rate(source_name, dest_name)
             except:
+                logging.warning("Error from Currency API : {}".format(sys.exc_info()[0]))
                 context['cur_default'] = True
                 del context['currencyNameSource']
                 del context['currencyNameDest']
