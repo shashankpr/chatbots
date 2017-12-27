@@ -52,6 +52,10 @@ class CallWit(object):
         entities = wit_response['entities']
         context_dict = self.merge(wit_response)
 
+        greetings, greetings_score = [], []
+        light_toggle, light_toggle_score = [], []
+        # intent, intent_score = [], []
+
         # TODO account for confidence values
         try:
             greetings, greetings_score = self.first_entity_value(entities, 'greetings')
@@ -205,6 +209,8 @@ class CallWit(object):
             context['missingLocation'] = True
             if context.get('forecast') is not None:
                 del context['forecast']
+
+        logging.debug("Forecast obtained for {}:  {}".format(loc, context))
         return context
 
     def getName(self, session_id):
@@ -242,6 +248,7 @@ class CallWit(object):
             if context.get('country_time') is not None:
                 del context['country_time']
 
+        logging.debug("Time obtained for {}:  {}".format(loc, context))
         return context
 
     def get_currency_conversion(self, context):

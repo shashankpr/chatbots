@@ -68,3 +68,7 @@ class CallGoogleTime(object):
 
         local_time = local_time.strftime(format)
         return str(local_time)
+
+# c = CallGoogleTime("Chennai")
+# time = c.world_time()
+# print time
