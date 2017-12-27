@@ -62,20 +62,26 @@ class CallWit(object):
         logging.info("Intent obtained : {} with score {}".format(intent, intent_score))
 
         if intent == 'getWeather':
+            logging.debug("Getting weather info")
             context = self.getWeather(context_dict)
             messenger.fb_message(session_id, self.weather_replies(user_name, context))
 
         elif intent == 'getTime':
+            logging.debug("Getting Time info")
             context = self.getTime(context_dict)
             messenger.fb_message(session_id, self.time_replies(user_name, context))
 
         elif intent == 'curConvert':
+            logging.debug("Getting Currency info")
             context = self.get_currency_conversion(context_dict)
             messenger.fb_message(session_id, self.currency_replies(user_name, context))
 
         elif light_toggle == 'on':
             if greetings and light_toggle_score < greetings_score:
-                messenger.fb_message(session_id, self.welcome_msg)
+                if greetings == 'greetings':
+                    messenger.fb_message(session_id, self.welcome_msg)
+                else:
+                    messenger.fb_message(session_id, "See you soon then!")
             else:
                 messenger.fb_message(session_id, "Switching ON the light ...")
                 self.turn_on_flux(session_id)
@@ -83,7 +89,10 @@ class CallWit(object):
 
         elif light_toggle == 'off':
             if greetings and light_toggle_score > greetings_score:
-                messenger.fb_message(session_id, self.welcome_msg)
+                if greetings == 'greetings':
+                    messenger.fb_message(session_id, self.welcome_msg)
+                else:
+                    messenger.fb_message(session_id, "See you soon then!")
             else:
                 messenger.fb_message(session_id, "Switching OFF the light ...")
                 self.turn_off_flux(session_id)
@@ -188,6 +197,7 @@ class CallWit(object):
                     del context['missingLocation']
             except:
                 logging.warning("Error from Weather API : {}".format(sys.exc_info()[0]))
+                # TODO Handle error messages in User replies
                 context['weather_default'] = True
                 del context['weatherLocation']
 
